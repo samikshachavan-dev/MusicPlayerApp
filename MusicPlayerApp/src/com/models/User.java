@@ -29,4 +29,15 @@ public class User {
 	public void playSong(Song song) {
 		
 	}
+	public User(String userName, String email, Set<Song> likedSongs, Map<String, Playlist> playlists,
+			Deque<Song> recentlyPlayed) {
+		super();
+		this.userName = userName;
+		this.email = email;
+		this.likedSongs = likedSongs;
+		this.playlists = playlists;
+		this.recentlyPlayed = recentlyPlayed;
+	}
+	
+	
 }
