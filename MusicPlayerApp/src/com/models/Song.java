@@ -11,7 +11,7 @@ public class Song {
 	
 	
 	public void incrementPlayCount() {
-		
+		playCount++;
 	}
 	
 	public String getInfo() {
