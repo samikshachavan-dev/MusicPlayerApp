@@ -10,7 +10,9 @@ public class Song {
 	private int playCount;
 
 	public void incrementPlayCount(Song song) {
-		song.setPlayCount(song.getPlayCount() + 1);
+		if(Library.allSongs.containsKey(song.getTitle())) {
+			song.setPlayCount(song.getPlayCount() + 1);
+		}
 		Library.genrePlayCount.put(song.getGenre(), Library.genrePlayCount.getOrDefault(song.getGenre(), 0) + 1);
 
 		Library.artistPlayCount.put(song.getArtistName(),

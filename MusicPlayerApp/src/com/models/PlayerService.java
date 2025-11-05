@@ -9,9 +9,8 @@ public class PlayerService {
 	private int volumne;
 	
 	public void play(Song song) {
-		if(song!=null) {
-			
-			System.out.println(song.getTitle()+"is playing........");
+		if(Library.allSongs.containsKey(song.getTitle())) {
+			System.out.println(song.getTitle()+" is playing........");
 			song.incrementPlayCount(song);
 			try {
 				Thread.sleep(5000);

@@ -1,36 +1,43 @@
 package com.models;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Playlist {
 	private String name;
 	private List<Song> songs;
 	private boolean isPublic;
+	public static Scanner sc = new Scanner(System.in);
 	
-	public void addSong(Song song) {
-		songs.add(song);
-		System.out.println(song.getTitle()+"added successfully to your playlist");
-	}
-	
-	public void removeSong(Song song) {
-		
-	}
-	
-	public void displaySongs() {
-		for(Song s:songs) {
-			System.out.println("Song Name"+s.getTitle()+"\t\tGenre"+s.getGenre()+"\t\tDuration"+s.getDuration()+"\t\tPlayCount"+s.getPlayCount());
+	public void addSong(String songtitle) {
+		for (Song s : Library.allSongs.values()) {
+			if (songtitle.equals(s.getTitle())) {
+				songs.add(s);
+				break;
+			}
 		}
 	}
-	
+
+	public void removeSong(Song song) {
+
+	}
+
+	public void displaySongs() {
+		for(Song song:songs) {
+			System.out.println(song.getTitle() + "\t\t" + song.getDuration() + "\t\t" + song.getPlayCount());
+			
+		}
+	}
+
 	public void shuffle() {
-		
+
 	}
 
 	public Playlist(String name, boolean isPublic) {
 		this.name = name;
 		this.isPublic = isPublic;
-		this.songs=new LinkedList<Song>();
+		this.songs = new ArrayList<Song>();
 	}
 
 	public String getName() {
@@ -56,6 +63,5 @@ public class Playlist {
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
-	
-	
+
 }
