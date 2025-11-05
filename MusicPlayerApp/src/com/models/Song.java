@@ -5,15 +5,19 @@ public class Song {
 	private String title;
 	private String artistName;
 	private String albumName;
-	private String  genre;
+	private String genre;
 	private double duration;
 	private int playCount;
-	
-	
-	public void incrementPlayCount() {
-		playCount++;
+
+	public void incrementPlayCount(Song song) {
+		song.setPlayCount(song.getPlayCount() + 1);
+		Library.genrePlayCount.put(song.getGenre(), Library.genrePlayCount.getOrDefault(song.getGenre(), 0) + 1);
+
+		Library.artistPlayCount.put(song.getArtistName(),
+				Library.artistPlayCount.getOrDefault(song.getArtistName(), 0) + 1);
+
 	}
-	
+
 	public String getInfo() {
 		return "String";
 	}
@@ -84,7 +88,5 @@ public class Song {
 	public void setPlayCount(int playCount) {
 		this.playCount = playCount;
 	}
-	
-	
-	
+
 }

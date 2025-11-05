@@ -9,7 +9,17 @@ public class PlayerService {
 	private int volumne;
 	
 	public void play(Song song) {
-		
+		if(song!=null) {
+			
+			System.out.println(song.getTitle()+"is playing........");
+			song.incrementPlayCount(song);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void pause() {

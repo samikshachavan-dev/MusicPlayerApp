@@ -10,16 +10,25 @@ import com.models.User;
 public class Main {
 
 	public static Scanner sc = new Scanner(System.in);
-	
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		Library.initialize();
 		System.out.println("Enter your name:");
 		String name = sc.next();
+		name = name.trim().toLowerCase();
 		System.out.println("Enter your email:");
 		String email = sc.next();
-		User user = new User(name, email);
-		Library.initializeSongs();
+		User user;
+		if (Library.allUsers.containsKey(name)) {
+			user = Library.allUsers.get(name);
+			System.out.println("Welcome " + name + "!");
+		} else {
+			user = new User(name, email);
+			Library.allUsers.put(name, user);
+			System.out.println("New user created: " + name);
+		}
+//		
 		Boolean flag = true;
 		while (flag) {
 			System.out.println("===========WELCOME TO MUSIC-PLAYER=============");
@@ -33,34 +42,37 @@ public class Main {
 			System.out.println("Enter your choice:");
 			int ch = sc.nextInt();
 			switch (ch) {
+
 			case 1 -> {
+				displayAllSongs();
+				System.out.println("------------------------------------------------");
 				System.out.println("Enter Song name you want to play:");
 				String s = sc.next();
-				Boolean songFound=false;
+				Boolean songFound = false;
 				for (Song song : Library.allSongs.values()) {
 					if (s.equalsIgnoreCase(song.getTitle())) {
 						user.playSong(song);
-						songFound=true;
+						songFound = true;
 						break;
 					}
 				}
-				if(songFound!=true) {
+				if (songFound != true) {
 					System.out.println("Song not found");
 				}
 			}
 			case 2 -> {
 				System.out.println("Enter Song name you want to like:");
 				String s = sc.next();
-				Boolean songFound=false;
+				Boolean songFound = false;
 				for (Song song : Library.allSongs.values()) {
 					if (s.equalsIgnoreCase(song.getTitle())) {
 						user.likeSong(song);
-						songFound=true;
+						songFound = true;
 						break;
 					}
 				}
-				if(songFound!=true) {
-				System.out.println("Song not found");
+				if (songFound != true) {
+					System.out.println("Song not found");
 				}
 			}
 
@@ -85,28 +97,28 @@ public class Main {
 				System.out.println("Enter playlist name");
 				String playlist = sc.next();
 				Playlist foundPlaylist = user.getPlaylists().get(playlist);
-			    if (foundPlaylist != null) {
-			        System.out.println("Playlist Found!");
-			        System.out.println("Enter Song to add:");
-			        String playlistSong = sc.next();
-			        boolean songFound = false;
+				if (foundPlaylist != null) {
+					System.out.println("Playlist Found!");
+					System.out.println("Enter Song to add:");
+					String playlistSong = sc.next();
+					boolean songFound = false;
 
-			        for (Song song : Library.allSongs.values()) {
-			            if (playlistSong.equalsIgnoreCase(song.getTitle())) {
-			                user.addSongToPlaylist(playlist, song); // ✅ correct parameter order
-			                songFound = true;
-			                break;
-			            }
-			        }
+					for (Song song : Library.allSongs.values()) {
+						if (playlistSong.equalsIgnoreCase(song.getTitle())) {
+							user.addSongToPlaylist(playlist, song); 
+							songFound = true;
+							break;
+						}
+					}
 
-			        if (!songFound) System.out.println("Song not found!");
-			    } else {
-			        System.out.println("Playlist not found!");
-			    }
+					if (!songFound)
+						System.out.println("Song not found!");
+				} else {
+					System.out.println("Playlist not found!");
+				}
 			}
 
-		
-			case 6->{
+			case 6 -> {
 				System.out.println("====================DISPLAYING ALL PLAYLISTS=================");
 				user.viewPlaylists();
 				System.out.println("=============================================================");
@@ -117,6 +129,19 @@ public class Main {
 			}
 		}
 		System.out.println("=============THANK FOR USING MUSIC-PLAYER=============");
+	}
+
+	public static void displayAllSongs() {
+		System.out.println("---------------------------------------------------------------");
+		System.out.printf("| %-25s | %-14s | %-10s |\n", "Song Title", "Duration (min)", "Play Count");
+		System.out.println("------------------------------------------------------------------------------");
+
+		for (Song song : Library.allSongs.values()) {
+			System.out.printf("| %-25s | %-14.2f | %-10d |\n", song.getTitle(), song.getDuration(),
+					song.getPlayCount());
+		}
+		System.out.println("------------------------------------------------");
+
 	}
 
 }
