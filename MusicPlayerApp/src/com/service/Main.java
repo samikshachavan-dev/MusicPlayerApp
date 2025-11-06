@@ -1,5 +1,7 @@
 package com.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.models.Library;
@@ -39,7 +41,8 @@ public class Main {
 			System.out.println("3. Display liked Songs");
 			System.out.println("4. Create Playlist");
 			System.out.println("5. Add Songs to Playlist");
-			System.out.println("6. Display  Playlist");
+			System.out.println("6. View  Playlist");
+			System.out.println("7. Play songs from playlist");
 			System.out.println("10. Exit");
 			System.out.println("Enter your choice:");
 			int ch = sc.nextInt();
@@ -51,24 +54,24 @@ public class Main {
 				sc.nextLine();
 				System.out.println("Enter Song name you want to play:");
 				String songName = sc.nextLine();
-				Boolean songAvailable=false;
+				Boolean songAvailable = false;
 				for (Song song : Library.allSongs.values()) {
 					if (song.getTitle().equals(songName)) {
 						playService = new PlayerService(song, true, 50);
 						playService.play(song);
-						songAvailable=true;
+						songAvailable = true;
 						break;
-					} 
+					}
 				}
-				if(songAvailable!=true) {
+				if (songAvailable != true) {
 					System.out.println("Song not found");
 				}
-				
-				
+
 			}
 			case 2 -> {
+				sc.nextLine();
 				System.out.println("Enter Song name you want to like:");
-				String s = sc.next();
+				String s = sc.nextLine();
 				Boolean songFound = false;
 				for (Song song : Library.allSongs.values()) {
 					if (s.equalsIgnoreCase(song.getTitle())) {
@@ -91,43 +94,91 @@ public class Main {
 			}
 
 			case 4 -> {
-				System.out.println("Enter playlist name");
-				String playlistName = sc.next();
-				System.out.println("Is Public? Enter yes/no");
-				String isPublic = sc.next();
+				sc.nextLine(); 
+				System.out.println("Enter playlist name:");
+				String playlistName = sc.nextLine();
+
+				System.out.println("Is Public? Enter yes/no:");
+				String isPublic = sc.nextLine();
+
 				Boolean ispublic = isPublic.equalsIgnoreCase("yes");
 				user.createPlaylist(playlistName, ispublic);
 			}
 			case 5 -> {
+				sc.nextLine();
 				System.out.println("Enter playlist name");
-				String playlist = sc.next();
-				
-				Playlist foundPlaylist = user.getPlaylists().get(playlist);
-				if (foundPlaylist != null) {
-					System.out.println("Playlist Found!");
-					System.out.println("Enter Song to add:");
-					String playlistSong = sc.next();
-					boolean songFound = false;
+				String playlistName = sc.nextLine();
+				Playlist playlist = null;
+				Boolean playlistFound = false;
 
-					for (Song song : Library.allSongs.values()) {
-						if (playlistSong.equalsIgnoreCase(song.getTitle())) {
-							user.addSongToPlaylist(playlist, song);
-							songFound = true;
-							break;
-						}
+				for (Playlist p : user.getPlaylists().values()) {
+					if (playlistName.equals(p.getName())) {
+						playlistFound = true;
+						playlist = p;
+						break;
 					}
-
-					if (!songFound)
-						System.out.println("Song not found!");
-				} else {
-					System.out.println("Playlist not found!");
 				}
+				if (!playlistFound) {
+					System.out.println("Playlist not Found!");
+				}
+
+				displayAllSongs();
+				Boolean addMoreSongs = true;
+				List<Song> songs = new ArrayList<>();
+				while (addMoreSongs) {
+					System.out.println("1.  Add Song/n2. Exit");
+					int ch1 = sc.nextInt();
+					sc.nextLine();
+					switch (ch1) {
+					case 1 -> {
+						boolean songFound = false;
+						System.out.println("Enter Song Title");
+						String songtitle = sc.nextLine();
+						for (Song song : Library.allSongs.values()) {
+							if (songtitle.equalsIgnoreCase(song.getTitle())) {
+								songFound = true;
+								songs.add(song);
+								break;
+							}
+						}
+
+						if (songFound != true) {
+							System.out.println("Song not found");
+						}
+
+					}
+					case 2 -> addMoreSongs = false;
+					}
+				}
+
+				user.addSongToPlaylist(playlist, songs);
+
 			}
 
 			case 6 -> {
 				System.out.println("====================DISPLAYING ALL PLAYLISTS=================");
 				user.viewPlaylists();
 				System.out.println("=============================================================");
+			}
+
+			case 7 -> {
+				user.viewPlaylists();
+				sc.nextLine();
+				System.out.println("Enter Playlist name");
+				String playlistName = sc.nextLine();
+				System.out.println("Enter Song name");
+				String playsongTitle = sc.nextLine();
+
+				boolean found = false;
+				for (Song song : Library.allSongs.values()) {
+					if (playsongTitle.equalsIgnoreCase(song.getTitle())) {
+						user.playSong(song, playlistName);
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					System.out.println("Song not found in library");
 			}
 			case 10 -> {
 				flag = false;

@@ -1,8 +1,10 @@
 package com.models;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -18,7 +20,8 @@ public class User {
 	private Map<String, Playlist> playlists;
 	private Deque<Song> recentlyPlayed;
 
-	Playlist playlist=null;
+	Playlist playlist = null;
+
 	public void likeSong(Song song) {
 		if (song != null) {
 			likedSongs.add(song);
@@ -30,49 +33,103 @@ public class User {
 
 	public void createPlaylist(String name, Boolean isPublic) {
 		playlist = new Playlist(name, isPublic);
-		System.out.println(playlist.getName() + " is created");
+		System.out.println(name + " is created");
 		Main.displayAllSongs();
-		Boolean addMoreSongs = true;
+
+		boolean addMoreSongs = true;
 		while (addMoreSongs) {
-			System.out.println("1.  Add Song/n2. Exit");
+			System.out.println("1. Add Song\n2. Exit"); 
+			System.out.print("Enter your choice: ");
+
+			
+			if (!sc.hasNextInt()) {
+				System.out.println("Please enter a valid number (1 or 2).");
+				sc.nextLine(); 
+				continue;
+			}
+
 			int ch = sc.nextInt();
-			sc.nextLine();
+			sc.nextLine(); 
+
 			switch (ch) {
 			case 1 -> {
-				System.out.println("Enter Song Title");
+				System.out.println("Enter Song Title:");
 				String songtitle = sc.nextLine();
-				playlist.addSong(songtitle);
+
+				
+				boolean found = false;
+				for (Song song : Library.allSongs.values()) {
+					if (song.getTitle().equalsIgnoreCase(songtitle)) {
+						playlist.getSongs().add(song);
+						System.out.println(song.getTitle() + " added to playlist " + name);
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+					System.out.println("Song not found in library.");
 			}
-			case 2->addMoreSongs=false;
+
+			case 2 -> addMoreSongs = false;
+
+			default -> System.out.println("Invalid choice. Enter 1 or 2.");
 			}
 		}
-		
 		playlists.put(name, playlist);
+
 	}
 
-
-
-	public void addSongToPlaylist(String playlistName, Song song) {
-		Playlist playlist = playlists.get(playlistName);
-		if (playlist != null && song != null) {
-//			playlist.addSong(song);
-			System.out.println("Song added to playlist: " + playlistName);
-		} else {
-			System.out.println("Playlist or Song not found");
+	public void addSongToPlaylist(Playlist playlist, List<Song> newSongs) {
+		// TODO Auto-generated method stub
+		if (playlist == null) {
+			System.out.println("Playlist not found!");
+			return;
 		}
+		List<Song> existingSongs = playlist.getSongs();
+		existingSongs.addAll(newSongs);
+
+		playlists.put(playlist.getName(), playlist);
+
+		System.out.println("Songs added successfully to playlist: " + playlist.getName());
 	}
 
 	public void viewPlaylists() {
 		for (Playlist p : playlists.values()) {
-			System.out.println("Playlist Name: " + p.getName() + " | Is Public " + (p.isPublic() ? "Yes" : "No"));
-			for(Song song:p.getSongs()) {
-				System.out.println(song.getTitle() + "\t\t" + song.getDuration() + "\t\t" + song.getPlayCount());
+			System.out.println("----------------------------------------------------------");
+			System.out.println("Playlist Name: " + p.getName() + " | Public: " + (p.isPublic() ? "Yes" : "No"));
+			System.out.println("----------------------------------------------------------");
+			System.out.printf("| %-25s | %-14s | %-10s |\n", "Song Title", "Duration (min)", "Play Count");
+			System.out.println("--------------------------------------------------------------------");
+
+			for (Song song : p.getSongs()) {
+				System.out.printf("| %-25s | %-14.2f | %-10d |\n", song.getTitle(), song.getDuration(),
+						song.getPlayCount());
 			}
+
+			System.out.println("--------------------------------------------------------------------");
 		}
+
 	}
 
-	public void playSong(Song song) {
-
+	public void playSong(Song song, String playlistName) {
+		// TODO Auto-generated method stub
+		for (Playlist playlist : playlists.values()) {
+			if (playlist.getName().equalsIgnoreCase(playlistName)) {
+				if (playlist.getSongs().contains(song))
+					System.out.println(song.getTitle() + " is playing.........");
+				try {
+					song.incrementPlayCount(song);
+				} catch (NoSuchMethodError | AbstractMethodError e) {
+					song.incrementPlayCount(song);
+				}
+				return;
+			} else {
+				System.out.println("Song '" + song.getTitle() + "' not found in playlist '" + playlistName + "'.");
+				return;
+			}
+		}
+		System.out.println("Playlist not found: " + playlistName);
 	}
 
 	public User(String userName, String email) {
