@@ -1,6 +1,5 @@
 package com.models;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,19 +54,7 @@ public class User {
 			case 1 -> {
 				System.out.println("Enter Song Title:");
 				String songtitle = sc.nextLine();
-				
-				boolean found = false;
-				for (Song song : Library.allSongs.values()) {
-					if (song.getTitle().equalsIgnoreCase(songtitle)) {
-						playlist.getSongs().add(song);
-						System.out.println(song.getTitle() + " added to playlist " + name);
-						found = true;
-						break;
-					}
-				}
-
-				if (!found)
-					System.out.println("Song not found in library.");
+				playlist.addSong(songtitle, playlist);;
 			}
 
 			case 2 -> addMoreSongs = false;
@@ -91,7 +78,38 @@ public class User {
 
 		System.out.println("Songs added successfully to playlist: " + playlist.getName());
 	}
-
+	
+	public void removeSong(String playlistName, String removeSongs) {
+		// TODO Auto-generated method stub
+		Playlist playlist=null;
+		Boolean playlistFound=false;
+		
+		for(Playlist p:playlists.values()) {
+			if(p.getName().equalsIgnoreCase(playlistName)){
+				playlistFound=true;
+				playlist=p;
+				break;
+			}
+		}
+		
+		List<Song> playlistSongs = playlist.getSongs();
+		Boolean songFound=false;
+		for(Song song:playlistSongs) {
+			if(removeSongs.equalsIgnoreCase(song.getTitle())) {
+				songFound=true;
+				playlist.removeSong(song, playlist);
+				break;
+			}
+		}
+		
+		if(playlistFound!=true) {
+			System.out.println(playlist.getName()+" not found!");
+		}
+		
+		if(songFound!=true) {
+			System.out.println(removeSongs+" not found in "+playlistName);
+		}
+	}
 	public void viewPlaylists() {
 		for (Playlist p : playlists.values()) {
 			System.out.println("----------------------------------------------------------");
@@ -99,11 +117,7 @@ public class User {
 			System.out.println("----------------------------------------------------------");
 			System.out.printf("| %-25s | %-14s | %-10s |\n", "Song Title", "Duration (min)", "Play Count");
 			System.out.println("--------------------------------------------------------------------");
-
-			for (Song song : p.getSongs()) {
-				System.out.printf("| %-25s | %-14.2f | %-10d |\n", song.getTitle(), song.getDuration(),
-						song.getPlayCount());
-			}
+			playlist.displaySongs(p);
 
 			System.out.println("--------------------------------------------------------------------");
 		}
@@ -128,6 +142,26 @@ public class User {
 			}
 		}
 		System.out.println("Playlist not found: " + playlistName);
+	}
+	
+	public void shufflePlaylist(String playlistName) {
+		// TODO Auto-generated method stub
+		Playlist playlist=null;
+		Boolean playlistFound=false;
+		
+		for(Playlist p:playlists.values()) {
+			if(p.getName().equalsIgnoreCase(playlistName)){
+				playlistFound=true;
+				playlist=p;
+				break;
+			}
+		}
+		if(playlist!=null) {
+			playlist.shuffle(playlist);
+		}
+		if(playlistFound!=true) {
+			System.out.println(playlist.getName()+" not found!");
+		}
 	}
 
 	public User(String userName, String email) {
@@ -163,4 +197,8 @@ public class User {
 		this.recentlyPlayed = recentlyPlayed;
 	}
 
+	
+
 }
+
+

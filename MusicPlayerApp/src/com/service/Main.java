@@ -3,7 +3,6 @@ package com.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import com.models.Library;
 import com.models.PlayerService;
 import com.models.Playlist;
@@ -43,6 +42,8 @@ public class Main {
 			System.out.println("5. Add Songs to Playlist");
 			System.out.println("6. View  Playlist");
 			System.out.println("7. Play songs from playlist");
+			System.out.println("8. Remove songs from playlist");
+			System.out.println("9. Shuffle songs from playlist");
 			System.out.println("10. Exit");
 			System.out.println("Enter your choice:");
 			int ch = sc.nextInt();
@@ -179,6 +180,22 @@ public class Main {
 				}
 				if (!found)
 					System.out.println("Song not found in library");
+			}
+			case 8->{
+				user.viewPlaylists();
+				sc.nextLine();
+				System.out.println("Enter playlist name:");
+				String playlistName=sc.nextLine();
+				System.out.println("Enter song name:");
+				String removeSongs=sc.nextLine();
+				user.removeSong(playlistName, removeSongs);
+			}
+			case 9->{
+				user.viewPlaylists();
+				sc.nextLine();
+				System.out.println("Enter playlist name:");
+				String playlistName=sc.nextLine();
+				user.shufflePlaylist(playlistName);
 			}
 			case 10 -> {
 				flag = false;

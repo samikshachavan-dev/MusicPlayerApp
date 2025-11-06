@@ -9,28 +9,47 @@ public class Playlist {
 	private List<Song> songs;
 	private boolean isPublic;
 	public static Scanner sc = new Scanner(System.in);
-	
-	public void addSong(String songtitle) {
-		for (Song s : Library.allSongs.values()) {
-			if (songtitle.equals(s.getTitle())) {
-				songs.add(s);
+
+	public void addSong(String songtitle, Playlist playlist) {
+		boolean found = false;
+		for (Song song : Library.allSongs.values()) {
+			if (song.getTitle().equalsIgnoreCase(songtitle)) {
+				playlist.songs.add(song);
+				System.out.println(song.getTitle() + " added to playlist " + name);
+				found = true;
 				break;
 			}
 		}
+		if (!found)
+			System.out.println("Song not found in library.");
 	}
 
-	public void removeSong(Song song) {
-
+	public void removeSong(Song song, Playlist playlist) {
+		playlist.songs.remove(song);
+		System.out.println(song.getTitle() + " removed from " + playlist.getName());
 	}
 
-	public void displaySongs() {
-		for(Song song:songs) {
-			System.out.println(song.getTitle() + "\t\t" + song.getDuration() + "\t\t" + song.getPlayCount());
-			
+	public void displaySongs(Playlist p) {
+
+		for (Song song : p.getSongs()) {
+			System.out.printf("| %-25s | %-14.2f | %-10d |\n", song.getTitle(), song.getDuration(),
+					song.getPlayCount());
 		}
 	}
 
-	public void shuffle() {
+	public void shuffle(Playlist p) {
+		System.out.println("--------------------------------------");
+		for (Song song : p.getSongs()) {
+			System.out.println(song.getTitle() + " is playing...........");
+			song.incrementPlayCount(song);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("--------------------------------------");
 
 	}
 
