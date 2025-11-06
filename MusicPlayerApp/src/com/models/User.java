@@ -55,7 +55,6 @@ public class User {
 			case 1 -> {
 				System.out.println("Enter Song Title:");
 				String songtitle = sc.nextLine();
-
 				
 				boolean found = false;
 				for (Song song : Library.allSongs.values()) {
@@ -81,7 +80,6 @@ public class User {
 	}
 
 	public void addSongToPlaylist(Playlist playlist, List<Song> newSongs) {
-		// TODO Auto-generated method stub
 		if (playlist == null) {
 			System.out.println("Playlist not found!");
 			return;
