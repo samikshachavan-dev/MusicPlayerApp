@@ -1,11 +1,14 @@
 package com.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+
 import com.models.Library;
 import com.models.PlayerService;
 import com.models.Playlist;
+import com.models.SearchService;
 import com.models.Song;
 import com.models.User;
 
@@ -16,13 +19,17 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Library.initialize();
+		SearchService searchService = new SearchService(Library.allSongs,Library.genreMap, Library.artistMap);
+
 		System.out.println("Enter your name:");
 		String name = sc.nextLine();
 		name = name.trim().toLowerCase();
 		System.out.println("Enter your email:");
 		String email = sc.nextLine();
 		User user;
+		
 		PlayerService playService = null;
+		
 		if (Library.allUsers.containsKey(name)) {
 			user = Library.allUsers.get(name);
 			System.out.println("Welcome " + name + "!");
@@ -31,7 +38,7 @@ public class Main {
 			Library.allUsers.put(name, user);
 			System.out.println("New user created: " + name);
 		}
-//		
+
 		Boolean flag = true;
 		while (flag) {
 			System.out.println("===========WELCOME TO MUSIC-PLAYER=============");
@@ -44,7 +51,14 @@ public class Main {
 			System.out.println("7. Play songs from playlist");
 			System.out.println("8. Remove songs from playlist");
 			System.out.println("9. Shuffle songs from playlist");
-			System.out.println("10. Exit");
+			System.out.println("10. Pause Song");
+			System.out.println("11. Next Song");
+			System.out.println("12. Previous Song");
+			System.out.println("13. Adjust Volumne");
+			System.out.println("14. Search Song By Song Name");
+			System.out.println("15. Search Song By Artist Name");
+			System.out.println("16. Search Song By Genre");
+			System.out.println("17. Exit");
 			System.out.println("Enter your choice:");
 			int ch = sc.nextInt();
 			switch (ch) {
@@ -197,7 +211,46 @@ public class Main {
 				String playlistName=sc.nextLine();
 				user.shufflePlaylist(playlistName);
 			}
-			case 10 -> {
+//			case 10->
+//			case 11->
+//			case 12->
+//			case 13->
+			case 14->{
+				displayAllSongs();
+				sc.nextLine();
+				System.out.println("Enter Song Name To Search:");
+				String songTitle=sc.nextLine();
+				List<Song> song=searchService.searchByTitle(songTitle);
+				displaySongs(song);
+				
+				for(Song s:song) {
+					playService = new PlayerService(s, true, 50);
+					playService.play(s);
+				}
+			}
+			case 15->{
+				displayAllSongs();
+				System.out.println("Enter Artist Name To Search:");
+				String artist=sc.nextLine();
+				List<Song> song=searchService.searchByArtist(artist);
+				displaySongs(song);
+				for(Song s:song) {
+					playService = new PlayerService(s, true, 50);
+					playService.play(s);
+				}
+			}
+			case 16->{
+				displayAllSongs();
+				System.out.println("Enter Genre To Search:");
+				String genre=sc.nextLine();
+				List<Song> song=searchService.searchByGenre(genre);
+				displaySongs(song);
+				for(Song s:song) {
+					playService = new PlayerService(s, true, 50);
+					playService.play(s);
+				}
+			}
+			case 17 -> {
 				flag = false;
 			}
 			}
@@ -205,17 +258,54 @@ public class Main {
 		System.out.println("=============THANK FOR USING MUSIC-PLAYER=============");
 	}
 
-	public static void displayAllSongs() {
-		System.out.println("---------------------------------------------------------------");
-		System.out.printf("| %-25s | %-14s | %-10s |\n", "Song Title", "Duration (min)", "Play Count");
-		System.out.println("------------------------------------------------------------------------------");
 
-		for (Song song : Library.allSongs.values()) {
-			System.out.printf("| %-25s | %-14.2f | %-10d |\n", song.getTitle(), song.getDuration(),
-					song.getPlayCount());
-		}
-		System.out.println("------------------------------------------------");
+
+	private static void displaySongs(List<Song> songList) {
+		// TODO Auto-generated method stub
+		if (songList == null) {
+	        System.out.println("No songs available in the library.");
+	        return;
+	    }
+		
+		 System.out.println("------------------------------------------------------------------------------------------------------------");
+		    System.out.printf("| %-5s | %-20s | %-15s | %-15s | %-10s | %-12s | %-10s |\n",
+		            "ID", "Title", "Album", "Artist", "Genre", "Duration(min)", "Play Count");
+		    System.out.println("------------------------------------------------------------------------------------------------------------");
+
+		    songList.stream()
+		            .sorted(Comparator.comparingInt(Song::getPlayCount).reversed()
+		                    .thenComparing(Song::getTitle))
+		            .forEach(song -> System.out.printf("| %-5s | %-20s | %-15s | %-15s | %-10s | %-12.2f | %-10d |\n",
+		                    song.getId(), song.getTitle(), song.getAlbumName(), song.getArtistName(),
+		                    song.getGenre(), song.getDuration(), song.getPlayCount()));
+
+		    System.out.println("------------------------------------------------------------------------------------------------------------");
 
 	}
+
+
+
+	public static void displayAllSongs() {
+	    if (Library.allSongs == null || Library.allSongs.isEmpty()) {
+	        System.out.println("No songs available in the library.");
+	        return;
+	    }
+	    System.out.println("------------------------------------------------------------------------------------------------------------");
+	    System.out.printf("| %-5s | %-20s | %-15s | %-15s | %-10s | %-12s | %-10s |\n",
+	            "ID", "Title", "Album", "Artist", "Genre", "Duration(min)", "Play Count");
+	    System.out.println("------------------------------------------------------------------------------------------------------------");
+
+	     Library.allSongs.values().stream()
+	            .sorted(Comparator.comparingInt(Song::getPlayCount).reversed()
+	                    .thenComparing(Song::getTitle))
+	            .forEach(song -> System.out.printf("| %-5s | %-20s | %-15s | %-15s | %-10s | %-12.2f | %-10d |\n",
+	                    song.getId(), song.getTitle(), song.getAlbumName(), song.getArtistName(),
+	                    song.getGenre(), song.getDuration(), song.getPlayCount()));
+
+	    System.out.println("------------------------------------------------------------------------------------------------------------");
+	}
+
+	
+	
 
 }

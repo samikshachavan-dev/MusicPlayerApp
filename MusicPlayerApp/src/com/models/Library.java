@@ -13,6 +13,20 @@ public class Library {
 	public static Map<String, Album> allAlbums=new HashMap<>();
 	public static Map<String, Integer> genrePlayCount=new HashMap<>();
 	public static Map<String, Integer> artistPlayCount=new HashMap<>();
+	public static Map<String, List<Song>> artistMap = new HashMap<>();
+	public static Map<String, List<Song>> genreMap = new HashMap<>();
+
+	
+	public static void initializeArtistAndGenreMaps() {
+	    for (Song song : allSongs.values()) {
+	        // Group by artist
+	        artistMap.computeIfAbsent(song.getArtistName(), k -> new ArrayList<>()).add(song);
+
+//	      add artist name in key and add song with artist name similar as found to artist map value.
+	        genreMap.computeIfAbsent(song.getGenre(), k -> new ArrayList<>()).add(song);
+	    }
+	}
+
 
 	public static void initializeSongs() {
 		// Taylor - Lover Album
@@ -105,7 +119,8 @@ public class Library {
 		initializeSongs();
 		initializeArtists();
 		initializeAlbums();
-//		initializegenrePlayCount();
-//		initializeartistPlayCount();
+		initializegenrePlayCount();
+		initializeartistPlayCount();
+		initializeArtistAndGenreMaps();
 	}
 }
