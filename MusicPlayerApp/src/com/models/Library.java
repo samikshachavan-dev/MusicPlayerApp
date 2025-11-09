@@ -26,6 +26,10 @@ public class Library {
 	        genreMap.computeIfAbsent(song.getGenre(), k -> new ArrayList<>()).add(song);
 	    }
 	}
+	
+	public static void initializeUsers() {
+		allUsers.put("samiksha", new User("samiksha", "sam.xom"));
+	}
 
 
 	public static void initializeSongs() {
@@ -47,9 +51,7 @@ public class Library {
 		allSongs.put("Tum Hi Ho", new Song(9, "Tum Hi Ho", "Arijit", "Ranjhana", "Romantic", 4.22, 0));
 	}
 
-	public static void initializeUsers() {
-		allUsers.put("samiksha", new User("samiksha", "sam.xom"));
-	}
+	
 
 	public static void initializeArtists() {
 		List<Album> taylor=new ArrayList<>();
@@ -119,6 +121,7 @@ public class Library {
 		initializeSongs();
 		initializeArtists();
 		initializeAlbums();
+		initializeUsers();
 		initializegenrePlayCount();
 		initializeartistPlayCount();
 		initializeArtistAndGenreMaps();

@@ -1,6 +1,7 @@
 package com.models;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,8 +26,13 @@ public class Playlist {
 	}
 
 	public void removeSong(Song song, Playlist playlist) {
+		if(playlist==null) {
+			System.out.println("Playlist not found");
+			return;
+		}
 		playlist.songs.remove(song);
 		System.out.println(song.getTitle() + " removed from " + playlist.getName());
+		
 	}
 
 	public void displaySongs(Playlist p) {
@@ -37,10 +43,14 @@ public class Playlist {
 		}
 	}
 
-	public void shuffle(Playlist p) {
+	
+
+	public void shuffle(Playlist p, Deque<Song> recentlyPlayed) {
+		// TODO Auto-generated method stub
 		System.out.println("--------------------------------------");
 		for (Song song : p.getSongs()) {
 			System.out.println(song.getTitle() + " is playing...........");
+			recentlyPlayed.addLast(song);
 			song.incrementPlayCount(song);
 			try {
 				Thread.sleep(5000);
@@ -82,5 +92,6 @@ public class Playlist {
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
+
 
 }

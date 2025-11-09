@@ -1,5 +1,6 @@
 package com.models;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,24 +38,24 @@ public class User {
 
 		boolean addMoreSongs = true;
 		while (addMoreSongs) {
-			System.out.println("1. Add Song\n2. Exit"); 
+			System.out.println("1. Add Song\n2. Exit");
 			System.out.print("Enter your choice: ");
 
-			
 			if (!sc.hasNextInt()) {
 				System.out.println("Please enter a valid number (1 or 2).");
-				sc.nextLine(); 
+				sc.nextLine();
 				continue;
 			}
 
 			int ch = sc.nextInt();
-			sc.nextLine(); 
+			sc.nextLine();
 
 			switch (ch) {
 			case 1 -> {
 				System.out.println("Enter Song Title:");
 				String songtitle = sc.nextLine();
-				playlist.addSong(songtitle, playlist);;
+				playlist.addSong(songtitle, playlist);
+				;
 			}
 
 			case 2 -> addMoreSongs = false;
@@ -64,6 +65,22 @@ public class User {
 		}
 		playlists.put(name, playlist);
 
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public void addSongToPlaylist(Playlist playlist, List<Song> newSongs) {
@@ -78,38 +95,39 @@ public class User {
 
 		System.out.println("Songs added successfully to playlist: " + playlist.getName());
 	}
-	
+
 	public void removeSong(String playlistName, String removeSongs) {
 		// TODO Auto-generated method stub
-		Playlist playlist=null;
-		Boolean playlistFound=false;
-		
-		for(Playlist p:playlists.values()) {
-			if(p.getName().equalsIgnoreCase(playlistName)){
-				playlistFound=true;
-				playlist=p;
+		Playlist playlist = null;
+		Boolean playlistFound = false;
+
+		for (Playlist p : playlists.values()) {
+			if (p.getName().equalsIgnoreCase(playlistName)) {
+				playlistFound = true;
+				playlist = p;
 				break;
 			}
 		}
-		
+
 		List<Song> playlistSongs = playlist.getSongs();
-		Boolean songFound=false;
-		for(Song song:playlistSongs) {
-			if(removeSongs.equalsIgnoreCase(song.getTitle())) {
-				songFound=true;
+		Boolean songFound = false;
+		for (Song song : playlistSongs) {
+			if (removeSongs.equalsIgnoreCase(song.getTitle())) {
+				songFound = true;
 				playlist.removeSong(song, playlist);
 				break;
 			}
 		}
-		
-		if(playlistFound!=true) {
-			System.out.println(playlist.getName()+" not found!");
+
+		if (playlistFound != true) {
+			System.out.println(playlist.getName() + " not found!");
 		}
-		
-		if(songFound!=true) {
-			System.out.println(removeSongs+" not found in "+playlistName);
+
+		if (songFound != true) {
+			System.out.println(removeSongs + " not found in " + playlistName);
 		}
 	}
+
 	public void viewPlaylists() {
 		for (Playlist p : playlists.values()) {
 			System.out.println("----------------------------------------------------------");
@@ -132,6 +150,8 @@ public class User {
 					System.out.println(song.getTitle() + " is playing.........");
 				try {
 					song.incrementPlayCount(song);
+					recentlyPlayed.addLast(song);
+
 				} catch (NoSuchMethodError | AbstractMethodError e) {
 					song.incrementPlayCount(song);
 				}
@@ -143,24 +163,24 @@ public class User {
 		}
 		System.out.println("Playlist not found: " + playlistName);
 	}
-	
+
 	public void shufflePlaylist(String playlistName) {
 		// TODO Auto-generated method stub
-		Playlist playlist=null;
-		Boolean playlistFound=false;
-		
-		for(Playlist p:playlists.values()) {
-			if(p.getName().equalsIgnoreCase(playlistName)){
-				playlistFound=true;
-				playlist=p;
+		Playlist playlist = null;
+		Boolean playlistFound = false;
+
+		for (Playlist p : playlists.values()) {
+			if (p.getName().equalsIgnoreCase(playlistName)) {
+				playlistFound = true;
+				playlist = p;
 				break;
 			}
 		}
-		if(playlist!=null) {
-			playlist.shuffle(playlist);
+		if (playlist != null) {
+			playlist.shuffle(playlist, recentlyPlayed);
 		}
-		if(playlistFound!=true) {
-			System.out.println(playlist.getName()+" not found!");
+		if (playlistFound != true) {
+			System.out.println(playlist.getName() + " not found!");
 		}
 	}
 
@@ -170,7 +190,7 @@ public class User {
 		this.email = email;
 		this.likedSongs = new HashSet<>();
 		this.playlists = new HashMap<>();
-		this.recentlyPlayed = null;
+		this.recentlyPlayed = new ArrayDeque<>();
 	}
 
 	public Set<Song> getLikedSongs() {
@@ -197,8 +217,4 @@ public class User {
 		this.recentlyPlayed = recentlyPlayed;
 	}
 
-	
-
 }
-
-
